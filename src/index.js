@@ -4,7 +4,6 @@ import { matchRoutes } from 'react-router-config';
 import Routes from './client/Routes';
 import renderer from './helpers/renderer';
 import createStore from './helpers/createStore';
-import { loadData } from './client/components/UsersList';
 
 const app = express();
 const port = 3000;
@@ -13,12 +12,11 @@ app.use(express.static('public'));
 app.get('*', (req, res) => {
   const store = createStore();
 
-  const promises = matchRoutes(Routes, req.path).map(({route}) =>  {
-    console.log('store', store)
+  const promises = matchRoutes(Routes, req.path).map(({ route }) => {
     return route.loadData ? route.loadData(store) : null;
   });
 
-  Promise.all(promises).then( () => {
+  Promise.all(promises).then(() => {
     res.send(renderer(req, store));
   });
 });
